@@ -1,0 +1,237 @@
+/* ========================================
+   Google Fonts Import
+   ======================================== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================================
+   Base Layer - Global Resets & Defaults
+   ======================================== */
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply font-sans text-dark-800 bg-white antialiased;
+    min-height: 100dvh;
+  }
+
+  /* Typography defaults */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold leading-tight;
+  }
+
+  h1 {
+    @apply text-3xl md:text-4xl lg:text-5xl;
+  }
+
+  h2 {
+    @apply text-2xl md:text-3xl lg:text-4xl;
+  }
+
+  h3 {
+    @apply text-xl md:text-2xl;
+  }
+
+  h4 {
+    @apply text-lg md:text-xl;
+  }
+
+  a {
+    @apply transition-colors duration-200;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  img {
+    @apply max-w-full h-auto;
+    display: block;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    @apply font-sans;
+  }
+}
+
+/* ========================================
+   Components Layer - Reusable Styles
+   ======================================== */
+@layer components {
+
+  /* Container */
+  .container-main {
+    @apply w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Section spacing */
+  .section-padding {
+    @apply py-12 md:py-16 lg:py-20;
+  }
+
+  /* Button base */
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold text-sm transition-all duration-200 cursor-pointer border-none outline-none;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary text-white hover:bg-primary-dark active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply btn bg-transparent text-primary border-2 border-primary hover:bg-primary hover:text-white;
+  }
+
+  .btn-dark {
+    @apply btn bg-dark-800 text-white hover:bg-dark-700;
+  }
+
+  /* Card base */
+  .card {
+    @apply bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  }
+
+  /* Section title */
+  .section-title {
+    @apply text-2xl md:text-3xl font-bold text-dark-800 mb-2;
+  }
+
+  .section-subtitle {
+    @apply text-dark-400 text-sm md:text-base max-w-2xl;
+  }
+
+  /* Form inputs */
+  .input-field {
+    @apply w-full px-4 py-3 rounded-lg border border-dark-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 text-sm;
+  }
+
+  .input-label {
+    @apply block text-sm font-medium text-dark-600 mb-1.5;
+  }
+}
+
+/* ========================================
+   Utilities Layer
+   ======================================== */
+@layer utilities {
+  .text-gradient-primary {
+    @apply bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent;
+  }
+}
+
+/* ========================================
+   Scrollbar Styling
+   ======================================== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* ========================================
+   Custom Premium Animations
+   ======================================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+.animate-fadeOut {
+  animation: fadeOut 0.2s ease-in forwards;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slideInRight {
+  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slideDown {
+  animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

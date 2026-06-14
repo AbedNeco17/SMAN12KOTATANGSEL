@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistem Kedisiplinan Siswa Use Case</title>
+  <style>
+    body {
+      background-color: #ffffff;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+    svg {
+      background-color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+<svg width="1200" height="1100" viewBox="0 0 1200 1100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Definitions for arrows -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9" fill="none" stroke="#666666" stroke-width="1.2" />
+    </marker>
+  </defs>
+
+  <!-- Outer Tab indicator -->
+  <path d="M 10 15 L 70 15 L 80 30 L 10 30 Z" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="40" y="26" text-anchor="middle" font-size="10" font-family="Arial, sans-serif">uc Model</text>
+
+  <!-- System Box -->
+  <rect x="220" y="40" width="760" height="1020" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="600" y="65" text-anchor="middle" font-size="14" font-weight="bold" font-family="Arial, sans-serif">SISTEM KEDISIPLINAN SISWA</text>
+
+  <!-- ================= LEFT ACTORS ================= -->
+  <!-- Guru / Staff Actor (Top Left) -->
+  <g transform="translate(100, 220)">
+    <circle cx="0" cy="-30" r="10" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.2" />
+    <line x1="0" y1="-20" x2="0" y2="15" stroke="#000000" stroke-width="1.2" />
+    <line x1="-20" y1="-10" x2="20" y2="-10" stroke="#000000" stroke-width="1.2" />
+    <line x1="0" y1="15" x2="-12" y2="40" stroke="#000000" stroke-width="1.2" />
+    <line x1="0" y1="15" x2="12" y2="40" stroke="#000000" stroke-width="1.2" />
+    <text x="0" y="60" text-anchor="middle" font-size="11" font-weight="bold" font-family="Arial, sans-serif">Guru / Staff</text>
+  </g>
+
+  <!-- Siswa Actor (Bottom Left) -->
+  <g transform="translate(100, 750)">
+    <circle cx="0" cy="-30" r="10" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.2" />
+    <line x1="0" y1="-20" x2="0" y2="15" stroke="#000000" stroke-width="1.2" />
+    <line x1="-20" y1="-10" x2="20" y2="-10" stroke="#000000" stroke-width="1.2" />
+    <line x1="0" y1="15" x2="-12" y2="40" stroke="#000000" stroke-width="1.2" />
+    <line x1="0" y1="15" x2="12" y2="40" stroke="#000000" stroke-width="1.2" />
+    <text x="0" y="60" text-anchor="middle" font-size="11" font-weight="bold" font-family="Arial, sans-serif">Siswa</text>
+  </g>
+
+  <!-- ================= RIGHT ACTORS ================= -->
+
+
+  <!-- Orang Tua Actor (Bottom Right) -->
+  <g transform="translate(1100, 750)">
+    <circle cx="0" cy="-30" r="10" fill="#FFF2CC" stroke="#D6B656" stroke-width="1.2" />
+    <line x1="0" y1="-20" x2="0" y2="15" stroke="#000000" stroke-width="1.2" />
+    <line x1="-20" y1="-10" x2="20" y2="-10" stroke="#000000" stroke-width="1.2" />
+    <line x1="0" y1="15" x2="-12" y2="40" stroke="#000000" stroke-width="1.2" />
+    <line x1="0" y1="15" x2="12" y2="40" stroke="#000000" stroke-width="1.2" />
+    <text x="0" y="60" text-anchor="middle" font-size="11" font-weight="bold" font-family="Arial, sans-serif">Orang Tua</text>
+  </g>
+
+  <!-- ================= LEFT COLUMN USE CASES ================= -->
+  <!-- Mencatat Pelanggaran & Prestasi Siswa -->
+  <g transform="translate(380, 250)">
+    <ellipse cx="0" cy="0" rx="100" ry="24" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.2" />
+    <text x="0" y="-2" text-anchor="middle" font-size="11" font-family="Arial, sans-serif">
+      <tspan x="0" dy="0">Mencatat Pelanggaran</tspan>
+      <tspan x="0" dy="13">&amp; Prestasi Siswa</tspan>
+    </text>
+  </g>
+  <!-- Mengirim Notifikasi Poin -->
+  <g transform="translate(380, 380)">
+    <ellipse cx="0" cy="0" rx="90" ry="24" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.2" />
+    <text x="0" y="-2" text-anchor="middle" font-size="11" font-family="Arial, sans-serif">
+      <tspan x="0" dy="0">Mengirim</tspan>
+      <tspan x="0" dy="13">Notifikasi Poin</tspan>
+    </text>
+  </g>
+  <!-- Menerbitkan Surat Peringatan SP -->
+  <g transform="translate(380, 500)">
+    <ellipse cx="0" cy="0" rx="90" ry="24" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.2" />
+    <text x="0" y="-2" text-anchor="middle" font-size="11" font-family="Arial, sans-serif">
+      <tspan x="0" dy="0">Menerbitkan</tspan>
+      <tspan x="0" dy="13">Surat Peringatan SP</tspan>
+    </text>
+  </g>
+
+  <!-- ================= CENTER COLUMN USE CASES ================= -->
+  <!-- Login -->
+  <g transform="translate(600, 110)">
+    <ellipse cx="0" cy="0" rx="90" ry="24" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.2" />
+    <text x="0" y="4" text-anchor="middle" font-size="12" font-family="Arial, sans-serif">Login</text>
+  </g>
+  <!-- Chat Konsultasi BK -->
+  <g transform="translate(600, 580)">
+    <ellipse cx="0" cy="0" rx="95" ry="24" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.2" />
+    <text x="0" y="4" text-anchor="middle" font-size="12" font-family="Arial, sans-serif">Chat Konsultasi BK</text>
+  </g>
+  <!-- Melihat Poin & Riwayat Karakter Mandiri -->
+  <g transform="translate(600, 720)">
+    <ellipse cx="0" cy="0" rx="105" ry="24" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.2" />
+    <text x="0" y="-2" text-anchor="middle" font-size="11" font-family="Arial, sans-serif">
+      <tspan x="0" dy="0">Melihat Poin &amp; Riwayat</tspan>
+      <tspan x="0" dy="13">Karakter Mandiri</tspan>
+    </text>
+  </g>
+  <!-- Logout -->
+  <g transform="translate(600, 860)">
+    <ellipse cx="0" cy="0" rx="90" ry="24" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.2" />
+    <text x="0" y="4" text-anchor="middle" font-size="12" font-family="Arial, sans-serif">Logout</text>
+  </g>
+
+  <!-- ================= RIGHT COLUMN USE CASES ================= -->
+  <!-- Melihat Data Poin Seluruh Siswa -->
+  <g transform="translate(820, 250)">
+    <ellipse cx="0" cy="0" rx="100" ry="24" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.2" />
+    <text x="0" y="-2" text-anchor="middle" font-size="11" font-family="Arial, sans-serif">
+      <tspan x="0" dy="0">Melihat Data Poin</tspan>
+      <tspan x="0" dy="13">Seluruh Siswa</tspan>
+    </text>
+  </g>
+  <!-- Mengelola Aturan Poin & Akun -->
+  <g transform="translate(820, 380)">
+    <ellipse cx="0" cy="0" rx="100" ry="24" fill="#DAE8FC" stroke="#6C8EBF" stroke-width="1.2" />
+    <text x="0" y="-2" text-anchor="middle" font-size="11" font-family="Arial, sans-serif">
+      <tspan x="0" dy="0">Mengelola Aturan</tspan>
+      <tspan x="0" dy="13">Poin &amp; Akun</tspan>
+    </text>
+  </g>
+
+
+  <!-- ================= GURU / STAFF SOLID CONNECTORS ================= -->
+  <line x1="120" y1="220" x2="510" y2="110" stroke="#000000" stroke-width="1.2" /> <!-- to Login -->
+  <line x1="120" y1="220" x2="280" y2="250" stroke="#000000" stroke-width="1.2" /> <!-- to Mencatat -->
+  <!-- to Melihat Data Poin Seluruh Siswa: arches over the left-column ovals beautifully without intersections -->
+  <path d="M 120 220 C 300 70, 600 70, 820 226" fill="none" stroke="#000000" stroke-width="1.2" />
+  <line x1="120" y1="220" x2="510" y2="580" stroke="#000000" stroke-width="1.2" /> <!-- to Chat BK -->
+  <!-- to Logout: outer left bus at x=70. Bridges over Siswa->Login (y=750) -->
+  <path d="M 80 220 L 70 220 L 70 745 A 5 5 0 0 1 70 755 L 70 860 L 510 860" fill="none" stroke="#000000" stroke-width="1.2" />
+
+
+  <!-- ================= SISWA SOLID CONNECTORS ================= -->
+  <!-- to Login: outer left bus at x=50. No crossings. -->
+  <path d="M 80 750 L 50 750 L 50 110 L 510 110" fill="none" stroke="#000000" stroke-width="1.2" />
+  <line x1="120" y1="750" x2="510" y2="580" stroke="#000000" stroke-width="1.2" /> <!-- to Chat BK -->
+  <line x1="120" y1="750" x2="505" y2="720" stroke="#000000" stroke-width="1.2" /> <!-- to Melihat Poin Mandiri -->
+  <line x1="120" y1="750" x2="510" y2="860" stroke="#000000" stroke-width="1.2" /> <!-- to Logout -->
+
+
+  <!-- ================= GURU TO MENGELOLA ATURAN CONNECTOR ================= -->
+  <path d="M 120 220 C 300 200, 500 250, 720 380" fill="none" stroke="#000000" stroke-width="1.2" /> <!-- to Mengelola Aturan Poin & Akun -->
+
+
+  <!-- ================= ORANG TUA SOLID CONNECTORS ================= -->
+  <!-- to Login: outer right bus at x=1150. No crossings. -->
+  <path d="M 1120 750 L 1150 750 L 1150 110 L 690 110" fill="none" stroke="#000000" stroke-width="1.2" />
+  <line x1="1080" y1="750" x2="695" y2="580" stroke="#000000" stroke-width="1.2" /> <!-- to Chat BK -->
+  <line x1="1080" y1="750" x2="695" y2="720" stroke="#000000" stroke-width="1.2" /> <!-- to Melihat Poin Mandiri -->
+  <line x1="1080" y1="750" x2="690" y2="860" stroke="#000000" stroke-width="1.2" /> <!-- to Logout -->
+
+
+  <!-- ================= INCLUDES (Dashed Arrows via Bus at x=495 and x=705 to avoid piercing ovals) ================= -->
+  <!-- Left Include Bus (for left column ovals and bottom center oval) -->
+  <path d="M 495 720 L 495 134 L 525 134" stroke="#666666" stroke-width="1.2" stroke-dasharray="4,4" marker-end="url(#arrow)" fill="none" />
+  <text x="490" y="150" font-size="9" fill="#666666" font-style="italic" text-anchor="end">«include»</text>
+
+  <!-- Connectors from left column to the bus -->
+  <path d="M 480 250 L 495 250" stroke="#666666" stroke-width="1.2" stroke-dasharray="4,4" fill="none" />
+
+  <!-- Right Include Bus (for right column ovals) -->
+  <path d="M 705 380 L 705 134 L 675 134" stroke="#666666" stroke-width="1.2" stroke-dasharray="4,4" marker-end="url(#arrow)" fill="none" />
+  <text x="710" y="150" font-size="9" fill="#666666" font-style="italic" text-anchor="start">«include»</text>
+
+  <!-- Connectors from right column to the bus -->
+  <path d="M 720 250 L 705 250" stroke="#666666" stroke-width="1.2" stroke-dasharray="4,4" fill="none" />
+  <path d="M 720 380 L 705 380" stroke="#666666" stroke-width="1.2" stroke-dasharray="4,4" fill="none" />
+
+  <!-- Chat BK -> Login (Straight vertical) -->
+  <path d="M 600 556 L 600 134" stroke="#666666" stroke-width="1.2" stroke-dasharray="4,4" marker-end="url(#arrow)" fill="none" />
+  <text x="605" y="340" font-size="9" fill="#666666" font-style="italic" text-anchor="start">«include»</text>
+
+
+  <!-- ================= EXTENDS (Dashed Arrows) ================= -->
+  <!-- Mengirim Notifikasi Poin -> Mencatat Pelanggaran & Prestasi (Straight vertical) -->
+  <path d="M 380 356 L 380 274" stroke="#666666" stroke-width="1.2" stroke-dasharray="4,4" marker-end="url(#arrow)" fill="none" />
+  <text x="385" y="315" font-size="9" fill="#666666" font-style="italic" text-anchor="start">«extend»</text>
+
+  <!-- Menerbitkan Surat Peringatan SP -> Mencatat Pelanggaran (Bypasses Mengirim Notifikasi on the left) -->
+  <path d="M 290 500 L 270 500 L 270 250 L 280 250" stroke="#666666" stroke-width="1.2" stroke-dasharray="4,4" marker-end="url(#arrow)" fill="none" />
+  <text x="265" y="375" font-size="9" fill="#666666" font-style="italic" text-anchor="end">«extend»</text>
+
+</svg>
+
+</body>
+</html>
