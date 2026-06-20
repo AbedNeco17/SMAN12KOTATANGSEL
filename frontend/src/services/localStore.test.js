@@ -36,7 +36,7 @@ describe('localStore Unit Tests (Siswa, Orang Tua, & Guru/BK)', () => {
     it('should retrieve student details by NISN', () => {
       // Set test student data
       const mockSiswa = [
-        { nisn: '0012345678', name: 'Lucas Adiputra', poin_pelanggaran: 5, poin_penghargaan: 45, status: 'Panggilan I' }
+        { nisn: '0012345678', name: 'Lucas Adiputra', poin_pelanggaran: 5, poin_penghargaan: 45, status: 'Bebas Pelanggaran' }
       ];
       localStorage.setItem('sman12_siswa_poin', JSON.stringify(mockSiswa));
 
@@ -45,7 +45,7 @@ describe('localStore Unit Tests (Siswa, Orang Tua, & Guru/BK)', () => {
       expect(student.name).toBe('Lucas Adiputra');
       expect(student.poin_pelanggaran).toBe(5);
       expect(student.poin_penghargaan).toBe(45);
-      expect(student.status).toBe('Panggilan I');
+      expect(student.status).toBe('Bebas Pelanggaran');
     });
 
     it('should add positive points and create notification & history record', () => {
@@ -80,7 +80,7 @@ describe('localStore Unit Tests (Siswa, Orang Tua, & Guru/BK)', () => {
 
     it('should accumulate violation points and update status accordingly', () => {
       const mockSiswa = [
-        { nisn: '0012345678', name: 'Lucas Adiputra', poin_pelanggaran: 15, poin_penghargaan: 20, status: 'Panggilan I' }
+        { nisn: '0012345678', name: 'Lucas Adiputra', poin_pelanggaran: 15, poin_penghargaan: 0, status: 'Panggilan I' }
       ];
       localStorage.setItem('sman12_siswa_poin', JSON.stringify(mockSiswa));
       localStorage.setItem('sman12_riwayat_poin', JSON.stringify([]));
@@ -128,6 +128,29 @@ describe('localStore Unit Tests (Siswa, Orang Tua, & Guru/BK)', () => {
       const notifications = localStore.getSiswaNotifikasi('0012345678');
       expect(notifications.length).toBe(1);
       expect(notifications[0].pesan).toBe('Poin berkurang');
+    });
+
+    it('should allow adding notifications dynamically via addSiswaNotifikasi', () => {
+      localStorage.setItem('sman12_siswa_notifikasi', JSON.stringify([]));
+      localStore.addSiswaNotifikasi('0012345678', 'Notifikasi Baru', 'info');
+      
+      const notifications = localStore.getSiswaNotifikasi('0012345678');
+      expect(notifications.length).toBe(1);
+      expect(notifications[0].pesan).toBe('Notifikasi Baru');
+      expect(notifications[0].tipe).toBe('info');
+    });
+
+    it('should allow deleting consultation messages via deletePesanBk', () => {
+      const mockPesan = [
+        { id: 1, nisn: '0012345678', pesan: 'Pesan 1' },
+        { id: 2, nisn: '0012345678', pesan: 'Pesan 2' }
+      ];
+      localStorage.setItem('sman12_pesan_bk', JSON.stringify(mockPesan));
+      
+      localStore.deletePesanBk(1);
+      const messages = localStore.getPesanBk();
+      expect(messages.length).toBe(1);
+      expect(messages[0].id).toBe(2);
     });
   });
 

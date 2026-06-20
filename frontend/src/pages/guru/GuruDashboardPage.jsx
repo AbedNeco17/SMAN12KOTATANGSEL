@@ -158,7 +158,18 @@ const GuruDashboardPage = () => {
   const handleSaveReply = (id) => {
     if (!replyText.trim()) return;
 
+    const msg = parentMessages.find(m => m.id === parseInt(id));
     localStore.balasPesanBk(id, replyText);
+    
+    if (msg) {
+      const truncatedReply = replyText.length > 40 ? replyText.substring(0, 40) + '...' : replyText;
+      localStore.addSiswaNotifikasi(
+        msg.nisn,
+        `Guru BK membalas konsultasi Anda: "${truncatedReply}"`,
+        'success'
+      );
+    }
+
     loadData();
     
     setReplyText('');
@@ -168,6 +179,17 @@ const GuruDashboardPage = () => {
     setTimeout(() => {
       setSuccessToast('');
     }, 2000);
+  };
+
+  const handleDeletePesan = (id) => {
+    if (window.confirm('Apakah Anda yakin ingin menghapus pesan konsultasi ini?')) {
+      localStore.deletePesanBk(id);
+      loadData();
+      setSuccessToast('Pesan konsultasi berhasil dihapus!');
+      setTimeout(() => {
+        setSuccessToast('');
+      }, 2000);
+    }
   };
 
   const resetAddStudentForm = () => {
@@ -308,8 +330,8 @@ const GuruDashboardPage = () => {
     <div className="min-h-screen bg-[#F0F2F5] flex relative">
       {/* ====== SUCCESS TOAST ====== */}
       {successToast && (
-        <div className="fixed top-6 right-6 bg-[#0B1528] text-white border border-slate-700/50 rounded-xl shadow-2xl p-4 flex items-start gap-3 animate-slideInRight max-w-sm z-55">
-          <div className="bg-[#F5921B]/10 text-[#F5921B] p-1.5 rounded-lg shrink-0 mt-0.5">
+        <div className="fixed bottom-6 right-6 bg-[#0B1528] text-white border border-slate-700/50 rounded-xl shadow-2xl p-4 flex items-start gap-3 animate-slideInRight max-w-sm z-[9999]">
+          <div className="bg-emerald-500/15 text-emerald-400 p-1.5 rounded-lg shrink-0 mt-0.5">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -515,54 +537,76 @@ const GuruDashboardPage = () => {
                             <h4 className="text-xs font-bold text-slate-900">{msg.namaOrangTua}</h4>
                             <p className="text-[10px] text-slate-400">Wali dari {msg.namaSiswa} ({msg.kelas})</p>
                           </div>
-                          <span className="text-[9px] text-slate-400 font-bold whitespace-nowrap">{msg.tanggal}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[9px] text-slate-400 font-bold whitespace-nowrap">{msg.tanggal}</span>
+                            <button
+                              onClick={() => handleDeletePesan(msg.id)}
+                              className="text-red-500 hover:text-red-700 p-1 rounded transition-colors shrink-0"
+                              title="Hapus Pesan"
+                            >
+                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </button>
+                          </div>
                         </div>
                         <p className="text-xs text-slate-700 bg-white p-2.5 rounded-lg border border-slate-100 leading-relaxed italic">
                           "{msg.pesan}"
                         </p>
                         
-                        {msg.dibalas ? (
+                        {replyMessageId === msg.id ? (
+                          <div className="mt-3">
+                            <div className="space-y-2">
+                              <textarea
+                                rows="2"
+                                value={replyText}
+                                onChange={(e) => setReplyText(e.target.value)}
+                                placeholder="Ketik balasan Anda..."
+                                className="w-full p-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-slate-300 resize-none text-slate-700 font-medium"
+                              />
+                              <div className="flex gap-2 justify-end">
+                                <button
+                                  onClick={() => setReplyMessageId(null)}
+                                  className="px-2.5 py-1 text-[10px] font-bold text-slate-500 hover:underline"
+                                >
+                                  Batal
+                                </button>
+                                <button
+                                  onClick={() => handleSaveReply(msg.id)}
+                                  className="px-3 py-1 bg-[#0B1528] hover:bg-[#12233f] text-white text-[10px] font-bold uppercase rounded-md shadow-sm"
+                                >
+                                  Simpan
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ) : msg.dibalas ? (
                           <div className="mt-3 text-[11px] text-slate-600 pl-3 border-l-2 border-slate-300">
-                            <p className="font-bold text-slate-900">Balasan Anda:</p>
+                            <div className="flex justify-between items-center">
+                              <p className="font-bold text-slate-900">Balasan Anda:</p>
+                              <button
+                                onClick={() => {
+                                  setReplyMessageId(msg.id);
+                                  setReplyText(msg.balasan);
+                                }}
+                                className="text-[10px] font-bold text-[#F5921B] hover:text-[#e08110] transition-colors"
+                              >
+                                Ubah Balasan
+                              </button>
+                            </div>
                             <p className="italic bg-slate-100 p-2 rounded text-slate-500 mt-1">"{msg.balasan}"</p>
                           </div>
                         ) : (
                           <div className="mt-3">
-                            {replyMessageId === msg.id ? (
-                              <div className="space-y-2">
-                                <textarea
-                                  rows="2"
-                                  value={replyText}
-                                  onChange={(e) => setReplyText(e.target.value)}
-                                  placeholder="Ketik balasan Anda..."
-                                  className="w-full p-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-slate-300 resize-none"
-                                />
-                                <div className="flex gap-2 justify-end">
-                                  <button
-                                    onClick={() => setReplyMessageId(null)}
-                                    className="px-2.5 py-1 text-[10px] font-bold text-slate-500 hover:underline"
-                                  >
-                                    Batal
-                                  </button>
-                                  <button
-                                    onClick={() => handleSaveReply(msg.id)}
-                                    className="px-3 py-1 bg-[#0B1528] hover:bg-[#12233f] text-white text-[10px] font-bold uppercase rounded-md shadow-sm"
-                                  >
-                                    Balas
-                                  </button>
-                                </div>
-                              </div>
-                            ) : (
-                              <button
-                                onClick={() => {
-                                  setReplyMessageId(msg.id);
-                                  setReplyText('');
-                                }}
-                                className="w-full text-center py-1.5 bg-[#0B1528] hover:bg-[#12233f] text-white text-[10px] font-bold uppercase rounded-lg transition-all"
-                              >
-                                Tulis Balasan
-                              </button>
-                            )}
+                            <button
+                              onClick={() => {
+                                setReplyMessageId(msg.id);
+                                setReplyText('');
+                              }}
+                              className="w-full text-center py-1.5 bg-[#0B1528] hover:bg-[#12233f] text-white text-[10px] font-bold uppercase rounded-lg transition-all"
+                            >
+                              Tulis Balasan
+                            </button>
                           </div>
                         )}
                       </div>
@@ -703,6 +747,7 @@ const GuruDashboardPage = () => {
                         <th className="py-4 px-4">NISN</th>
                         <th className="py-4 px-4">Kelas</th>
                         <th className="py-4 px-4">Password (Siswa/Ortu)</th>
+                        <th className="py-4 px-4 text-center">Poin Sisa (Karakter)</th>
                         <th className="py-4 px-4 text-center">Poin Pelanggaran</th>
                         <th className="py-4 px-4 text-center">Poin Penghargaan</th>
                         <th className="py-4 px-4">Status</th>
@@ -717,6 +762,8 @@ const GuruDashboardPage = () => {
                         else if (siswa.status === 'Panggilan III') statusBadge = 'bg-orange-50 text-orange-600';
                         else if (siswa.status === 'Panggilan IV') statusBadge = 'bg-red-50 text-red-500';
                         else if (siswa.status === 'Panggilan Terakhir') statusBadge = 'bg-red-100 text-red-700';
+
+                        const sisaPoin = Math.max(0, Math.min(100, 100 - (siswa.poin_pelanggaran || 0) + (siswa.poin_penghargaan || 0)));
 
                         return (
                           <tr key={siswa.nisn} className="hover:bg-slate-50/50 transition-colors">
@@ -735,7 +782,17 @@ const GuruDashboardPage = () => {
                                 </div>
                               </div>
                             </td>
-                            <td className="py-4 px-4 text-center font-extrabold text-red-600 text-sm font-mono whitespace-nowrap">
+                            <td className="py-4 px-4 text-center font-extrabold text-sm font-mono whitespace-nowrap">
+                              <span className={
+                                sisaPoin === 100 ? 'text-emerald-600' :
+                                sisaPoin >= 80 ? 'text-blue-600' :
+                                sisaPoin >= 60 ? 'text-yellow-600' :
+                                sisaPoin >= 40 ? 'text-orange-600' : 'text-red-600'
+                              }>
+                                {sisaPoin} Pts
+                              </span>
+                            </td>
+                            <td className="py-4 px-4 text-center font-extrabold text-red-500 text-sm font-mono whitespace-nowrap">
                               {siswa.poin_pelanggaran || 0} Pts
                             </td>
                             <td className="py-4 px-4 text-center font-extrabold text-emerald-600 text-sm font-mono whitespace-nowrap">
@@ -957,8 +1014,17 @@ const GuruDashboardPage = () => {
                               <p className="text-[10px] text-slate-500 font-medium">NISN: {s.nisn} | Kelas: {s.kelas}</p>
                               <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1 text-[10px] text-slate-500 font-semibold animate-fadeIn">
                                 <div className="flex items-center gap-1 shrink-0">
+                                  <span className="text-[9px] font-bold text-slate-400 uppercase">Sisa Poin:</span>
+                                  <span className={`font-extrabold font-mono whitespace-nowrap ${
+                                    (100 - (s.poin_pelanggaran || 0) + (s.poin_penghargaan || 0)) >= 80 ? 'text-emerald-600' :
+                                    (100 - (s.poin_pelanggaran || 0) + (s.poin_penghargaan || 0)) >= 60 ? 'text-blue-600' :
+                                    (100 - (s.poin_pelanggaran || 0) + (s.poin_penghargaan || 0)) >= 40 ? 'text-amber-500' : 'text-red-600'
+                                  }`}>{Math.max(0, Math.min(100, 100 - (s.poin_pelanggaran || 0) + (s.poin_penghargaan || 0)))} Pts</span>
+                                </div>
+                                <div className="h-3 w-px bg-slate-200 shrink-0" />
+                                <div className="flex items-center gap-1 shrink-0">
                                   <span className="text-[9px] font-bold text-slate-400 uppercase">Pelanggaran:</span>
-                                  <span className="font-extrabold text-red-600 font-mono whitespace-nowrap">{s.poin_pelanggaran || 0} Pts</span>
+                                  <span className="font-extrabold text-red-500 font-mono whitespace-nowrap">{s.poin_pelanggaran || 0} Pts</span>
                                 </div>
                                 <div className="h-3 w-px bg-slate-200 shrink-0" />
                                 <div className="flex items-center gap-1 shrink-0">
@@ -1038,11 +1104,15 @@ const GuruDashboardPage = () => {
                                       </div>
                                     </div>
                                     <div className="text-right shrink-0">
-                                      <span className="block text-[10px] font-extrabold text-red-600 font-mono bg-red-50 px-2 py-0.5 rounded">
-                                        {s.poin_pelanggaran || 0} PR
+                                      <span className={`block text-[10px] font-extrabold font-mono px-2 py-0.5 rounded ${
+                                        (100 - (s.poin_pelanggaran || 0) + (s.poin_penghargaan || 0)) >= 80 ? 'bg-emerald-50 text-emerald-600' :
+                                        (100 - (s.poin_pelanggaran || 0) + (s.poin_penghargaan || 0)) >= 60 ? 'bg-yellow-50 text-yellow-600 border border-yellow-200/50' :
+                                        (100 - (s.poin_pelanggaran || 0) + (s.poin_penghargaan || 0)) >= 40 ? 'bg-orange-50 text-orange-600 border border-orange-200/50' : 'bg-red-50 text-red-600'
+                                      }`}>
+                                        Sisa: {Math.max(0, Math.min(100, 100 - (s.poin_pelanggaran || 0) + (s.poin_penghargaan || 0)))} Pts
                                       </span>
-                                      <span className="block text-[9px] font-bold text-emerald-600 font-mono bg-emerald-50 px-2 py-0.5 rounded mt-0.5">
-                                        +{s.poin_penghargaan || 0} PH
+                                      <span className="block text-[8px] font-bold text-slate-400 font-mono mt-0.5">
+                                        {s.poin_pelanggaran || 0} PR | +{s.poin_penghargaan || 0} PH
                                       </span>
                                     </div>
                                   </button>
@@ -1214,8 +1284,17 @@ const GuruDashboardPage = () => {
                               <p className="text-[10px] text-slate-500 font-medium">NISN: {s.nisn} | Kelas: {s.kelas}</p>
                               <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1 text-[10px] text-slate-500 font-semibold animate-fadeIn">
                                 <div className="flex items-center gap-1 shrink-0">
+                                  <span className="text-[9px] font-bold text-slate-400 uppercase">Sisa Poin:</span>
+                                  <span className={`font-extrabold font-mono whitespace-nowrap ${
+                                    (100 - (s.poin_pelanggaran || 0) + (s.poin_penghargaan || 0)) >= 80 ? 'text-emerald-600' :
+                                    (100 - (s.poin_pelanggaran || 0) + (s.poin_penghargaan || 0)) >= 60 ? 'text-blue-600' :
+                                    (100 - (s.poin_pelanggaran || 0) + (s.poin_penghargaan || 0)) >= 40 ? 'text-amber-500' : 'text-red-600'
+                                  }`}>{Math.max(0, Math.min(100, 100 - (s.poin_pelanggaran || 0) + (s.poin_penghargaan || 0)))} Pts</span>
+                                </div>
+                                <div className="h-3 w-px bg-slate-200 shrink-0" />
+                                <div className="flex items-center gap-1 shrink-0">
                                   <span className="text-[9px] font-bold text-slate-400 uppercase">Pelanggaran:</span>
-                                  <span className="font-extrabold text-red-600 font-mono whitespace-nowrap">{s.poin_pelanggaran || 0} Pts</span>
+                                  <span className="font-extrabold text-red-500 font-mono whitespace-nowrap">{s.poin_pelanggaran || 0} Pts</span>
                                 </div>
                                 <div className="h-3 w-px bg-slate-200 shrink-0" />
                                 <div className="flex items-center gap-1 shrink-0">
@@ -1295,11 +1374,15 @@ const GuruDashboardPage = () => {
                                       </div>
                                     </div>
                                     <div className="text-right shrink-0">
-                                      <span className="block text-[10px] font-extrabold text-red-600 font-mono bg-red-50 px-2 py-0.5 rounded">
-                                        {s.poin_pelanggaran || 0} PR
+                                      <span className={`block text-[10px] font-extrabold font-mono px-2 py-0.5 rounded ${
+                                        (100 - (s.poin_pelanggaran || 0) + (s.poin_penghargaan || 0)) >= 80 ? 'bg-emerald-50 text-emerald-600' :
+                                        (100 - (s.poin_pelanggaran || 0) + (s.poin_penghargaan || 0)) >= 60 ? 'bg-yellow-50 text-yellow-600 border border-yellow-200/50' :
+                                        (100 - (s.poin_pelanggaran || 0) + (s.poin_penghargaan || 0)) >= 40 ? 'bg-orange-50 text-orange-600 border border-orange-200/50' : 'bg-red-50 text-red-600'
+                                      }`}>
+                                        Sisa: {Math.max(0, Math.min(100, 100 - (s.poin_pelanggaran || 0) + (s.poin_penghargaan || 0)))} Pts
                                       </span>
-                                      <span className="block text-[9px] font-bold text-emerald-600 font-mono bg-emerald-50 px-2 py-0.5 rounded mt-0.5">
-                                        +{s.poin_penghargaan || 0} PH
+                                      <span className="block text-[8px] font-bold text-slate-400 font-mono mt-0.5">
+                                        {s.poin_pelanggaran || 0} PR | +{s.poin_penghargaan || 0} PH
                                       </span>
                                     </div>
                                   </button>

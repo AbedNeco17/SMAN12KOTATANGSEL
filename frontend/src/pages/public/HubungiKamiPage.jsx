@@ -226,40 +226,22 @@ const HubungiKamiPage = () => {
       </section>
 
       {/* ==========================================
-          MAP SECTION — Placeholder matching design
+          MAP SECTION — Real Google Maps Embed
           ========================================== */}
       <section className="py-6 md:py-10 bg-white">
         <div className="container-main">
-          <div className="relative rounded-xl overflow-hidden bg-[#C8E6C9] h-[280px] md:h-[340px]">
-            <div className="absolute inset-0 opacity-20">
-              <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <pattern id="mapGrid" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
-                    <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#2E7D32" strokeWidth="0.5" />
-                  </pattern>
-                  <pattern id="mapGridSmall" x="0" y="0" width="15" height="15" patternUnits="userSpaceOnUse">
-                    <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#2E7D32" strokeWidth="0.2" />
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#mapGridSmall)" />
-                <rect width="100%" height="100%" fill="url(#mapGrid)" />
-                <line x1="0" y1="30%" x2="100%" y2="70%" stroke="#4CAF50" strokeWidth="2" opacity="0.3" />
-                <line x1="20%" y1="0" x2="80%" y2="100%" stroke="#4CAF50" strokeWidth="2" opacity="0.3" />
-                <line x1="40%" y1="0" x2="60%" y2="100%" stroke="#4CAF50" strokeWidth="1.5" opacity="0.2" />
-              </svg>
-            </div>
-
-            <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-              <div className="relative mb-2">
-                <svg className="w-8 h-8 text-red-500 drop-shadow-md" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 0C7.31 0 3.5 3.81 3.5 8.5c0 7.38 8.5 15.5 8.5 15.5s8.5-8.12 8.5-15.5C20.5 3.81 16.69 0 12 0zm0 13a4.5 4.5 0 110-9 4.5 4.5 0 010 9z" />
-                </svg>
-              </div>
-              <div className="bg-white/90 backdrop-blur-sm rounded-lg px-4 py-2 shadow-sm text-center">
-                <p className="text-sm font-bold text-dark-800">Peta Lokasi SMAN 12</p>
-                <p className="text-[11px] text-dark-400">Tangerang Selatan, Banten</p>
-              </div>
-            </div>
+          <div className="relative rounded-xl overflow-hidden shadow-sm border border-slate-100 h-[280px] md:h-[360px] bg-slate-100">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.867499645258!2d106.66607067499092!3d-6.306915193685601!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69e5d481f1853d%3A0x675841022879549f!2sSMAN%2012%20Kota%20Tangerang%20Selatan!5e0!3m2!1sid!2sid!4v1718459468923!5m2!1sid!2sid"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Peta Lokasi SMAN 12 Kota Tangerang Selatan"
+              className="w-full h-full"
+            />
           </div>
         </div>
       </section>

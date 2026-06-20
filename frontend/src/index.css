@@ -235,3 +235,33 @@
 .animate-slideDown {
   animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* Custom grid and stripes patterns for Kesiswaan Page */
+@keyframes moveStripes {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 40px 40px;
+  }
+}
+
+.animate-moving-stripes {
+  animation: moveStripes 15s linear infinite;
+}
+
+.bg-stripes-pattern {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(245, 146, 27, 0.07),
+    rgba(245, 146, 27, 0.07) 12px,
+    transparent 12px,
+    transparent 24px
+  );
+}
+
+/* Glowing background blob */
+.bg-glow-orb {
+  filter: blur(80px);
+  background: radial-gradient(circle, rgba(245, 146, 27, 0.2) 0%, rgba(245, 146, 27, 0.02) 60%, transparent 100%);
+}

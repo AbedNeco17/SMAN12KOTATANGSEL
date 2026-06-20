@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from '@components/layout/Navbar';
 import Footer from '@components/layout/Footer';
+import InteractiveGrid from '@components/ui/InteractiveGrid';
 
 const PublicLayout = () => {
   const location = useLocation();
@@ -23,9 +24,12 @@ const PublicLayout = () => {
   }, [location.pathname, location.hash]);
 
   return (
-    <div className="flex flex-col min-h-[100dvh]">
+    <div className="flex flex-col min-h-[100dvh] relative bg-slate-50/10 overflow-hidden">
+      {/* Dynamic interactive grid lines canvas running globally on page body background */}
+      <InteractiveGrid />
+      
       <Navbar />
-      <main className="flex-1">
+      <main className="flex-1 relative z-10">
         <Outlet />
       </main>
       <Footer />

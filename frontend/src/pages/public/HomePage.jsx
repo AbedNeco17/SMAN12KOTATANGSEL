@@ -45,18 +45,24 @@ const HomePage = () => {
   };
 
   return (
-    <div>
+    <div className="bg-transparent">
+
       {/* ==========================================
-          HERO SECTION — Background image + overlay
+          HERO SECTION — High-Definition School Building Photo + Overlay
           ========================================== */}
-      <section className="relative min-h-[420px] sm:min-h-[480px] md:min-h-[520px] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[460px] sm:min-h-[520px] md:min-h-[580px] flex items-center justify-center overflow-hidden border-b border-slate-200/50 shadow-sm">
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-no-repeat"
           style={{
-            backgroundImage: `linear-gradient(135deg, #2E7D32 0%, #4CAF50 30%, #81C784 50%, #A5D6A7 70%, #C8E6C9 100%)`,
+            backgroundImage: `
+              linear-gradient(to bottom, rgba(11, 21, 40, 0.8) 0%, rgba(11, 21, 40, 0.55) 50%, rgba(11, 21, 40, 0.92) 100%),
+              url('/images/sman12-gedung.jpg')
+            `,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center 42%',
           }}
         />
-        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-black/15" />
 
         <div className="relative z-10 text-center px-4 py-12 md:py-16">
           <h1 className="text-white font-extrabold leading-[1.08] mb-3
@@ -91,7 +97,7 @@ const HomePage = () => {
       {/* ==========================================
           SAMBUTAN KEPALA SEKOLAH SECTION
           ========================================== */}
-      <section id="sambutan-kepsek" className="py-12 md:py-16 bg-slate-50/50">
+      <section id="sambutan-kepsek" className="py-12 md:py-16 bg-transparent relative z-10">
         <div className="container-main">
           <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start">
             <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex flex-col items-center text-center shrink-0">
@@ -151,7 +157,10 @@ const HomePage = () => {
       {/* ==========================================
           PRESTASI SISWA SECTION — 4 student cards
           ========================================== */}
-      <section id="prestasi-siswa" className="py-12 md:py-16 bg-white border-t border-slate-100">
+      <section
+        id="prestasi-siswa"
+        className="py-12 md:py-16 bg-transparent relative z-10 border-t border-slate-100/60"
+      >
         <div className="container-main">
           <div className="text-center max-w-xl mx-auto mb-10">
             <span className="text-[10px] font-bold text-primary tracking-widest uppercase block mb-1">
@@ -197,7 +206,9 @@ const HomePage = () => {
       {/* ==========================================
           BERITA & PENGUMUMAN SECTION
           ========================================== */}
-      <section className="py-10 md:py-14 bg-slate-50/30 border-t border-slate-100">
+      <section
+        className="py-10 md:py-14 bg-transparent relative z-10 border-t border-slate-100/60"
+      >
         <div className="container-main">
           <div className="flex items-start justify-between mb-6 md:mb-8">
             <div>

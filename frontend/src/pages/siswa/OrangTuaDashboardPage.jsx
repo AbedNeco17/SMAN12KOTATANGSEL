@@ -51,9 +51,9 @@ const OrangTuaDashboardPage = () => {
       const bkMsgs = localStore.getPesanBk().filter(m => m.nisn === prof.nisn);
       setSentMessages(bkMsgs);
 
-      const vPts = localStore.getViolationPoints(prof.nisn);
-      setViolationPoints(vPts);
-      setLangkahPembinaan(localStore.getLangkahPembinaan(vPts));
+      const netViolation = localStore.getNetViolationPoints(prof.nisn);
+      setViolationPoints(netViolation);
+      setLangkahPembinaan(localStore.getLangkahPembinaan(netViolation));
       setPointRules(localStore.getPointRules());
     }
   }, [navigate]);
@@ -150,16 +150,20 @@ const OrangTuaDashboardPage = () => {
 
         <div class="summary-container">
           <div class="summary-card">
-            <div style="font-size: 10px; text-transform: uppercase; color: #000000; font-weight: bold;">Poin Pelanggaran</div>
-            <div class="summary-val" style="color: #000000;">${vPoints}</div>
+            <div style="font-size: 9px; text-transform: uppercase; color: #000000; font-weight: bold;">Sisa Poin Karakter</div>
+            <div class="summary-val" style="color: #000000;">${Math.max(0, Math.min(100, 100 - vPoints + aPoints))} / 100</div>
           </div>
           <div class="summary-card">
-            <div style="font-size: 10px; text-transform: uppercase; color: #000000; font-weight: bold;">Poin Penghargaan</div>
-            <div class="summary-val" style="color: #000000;">+${aPoints}</div>
+            <div style="font-size: 9px; text-transform: uppercase; color: #000000; font-weight: bold;">Poin Pelanggaran</div>
+            <div class="summary-val" style="color: #000000;">${vPoints} Pts</div>
           </div>
           <div class="summary-card">
-            <div style="font-size: 10px; text-transform: uppercase; color: #000000; font-weight: bold;">Status Kesiswaan</div>
-            <div class="summary-val" style="color: #000000; font-size: 14px; text-transform: uppercase; margin-top: 10px;">${currentStatus}</div>
+            <div style="font-size: 9px; text-transform: uppercase; color: #000000; font-weight: bold;">Poin Penghargaan</div>
+            <div class="summary-val" style="color: #000000;">+${aPoints} Pts</div>
+          </div>
+          <div class="summary-card">
+            <div style="font-size: 9px; text-transform: uppercase; color: #000000; font-weight: bold;">Status Kesiswaan</div>
+            <div class="summary-val" style="color: #000000; font-size: 11px; text-transform: uppercase; margin-top: 10px;">${currentStatus}</div>
           </div>
         </div>
 
@@ -255,7 +259,16 @@ const OrangTuaDashboardPage = () => {
     addToast('Pesan Anda berhasil dikirim ke Guru BK dan akan segera dibalas.', 'success');
   };
 
+  const handleDeletePesan = (id) => {
+    if (window.confirm('Apakah Anda yakin ingin menghapus pesan konsultasi ini?')) {
+      localStore.deletePesanBk(id);
+      setSentMessages(localStore.getPesanBk().filter(m => m.nisn === parent.nisn));
+      addToast('Pesan konsultasi berhasil dihapus.', 'success');
+    }
+  };
+
   const unreadCount = notifications.filter(n => !n.dibaca).length;
+  const sisaPoin = Math.max(0, Math.min(100, 100 - (studentPoints.poin_pelanggaran || 0) + (studentPoints.poin_penghargaan || 0)));
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -303,16 +316,30 @@ const OrangTuaDashboardPage = () => {
       <main className="max-w-7xl mx-auto p-6 md:p-8 space-y-6">
         <div className="bg-white rounded-2xl border border-slate-200/80 p-6 flex flex-col md:flex-row items-center gap-6 shadow-sm">
           <div className={`w-28 h-28 rounded-full border-4 flex flex-col items-center justify-center shrink-0 relative ${
-            studentPoints.poin_pelanggaran > 0 ? 'border-red-500/30 bg-red-50/50' : 'border-emerald-500/30 bg-emerald-50/50'
+            sisaPoin === 100 ? 'border-emerald-500/30 bg-emerald-50/50' :
+            sisaPoin >= 80 ? 'border-blue-500/30 bg-blue-50/50' :
+            sisaPoin >= 60 ? 'border-yellow-500/30 bg-yellow-50/50' :
+            sisaPoin >= 40 ? 'border-orange-500/30 bg-orange-50/50' :
+            sisaPoin >= 5 ? 'border-red-500/30 bg-red-50/50' : 'border-rose-950/30 bg-rose-950/10'
           }`}>
-            <span className={`text-3xl font-extrabold leading-none ${studentPoints.poin_pelanggaran > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
-              {studentPoints.poin_pelanggaran || 0}
-            </span>
-            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-1 text-center px-2">Poin Pelanggaran</span>
-            <div className={`absolute -bottom-1 px-2.5 py-0.5 text-white rounded-full text-[9px] font-bold uppercase tracking-wider shadow-sm ${
-              studentPoints.poin_pelanggaran > 0 ? 'bg-red-500' : 'bg-emerald-500'
+            <span className={`text-3xl font-extrabold leading-none ${
+              sisaPoin === 100 ? 'text-emerald-600' :
+              sisaPoin >= 80 ? 'text-blue-600' :
+              sisaPoin >= 60 ? 'text-yellow-600' :
+              sisaPoin >= 40 ? 'text-orange-600' :
+              sisaPoin >= 5 ? 'text-red-600' : 'text-rose-950'
             }`}>
-              {studentPoints.poin_pelanggaran > 0 ? 'Dalam Evaluasi' : 'Aman'}
+              {sisaPoin}
+            </span>
+            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-1 text-center px-2">Poin Karakter</span>
+            <div className={`absolute -bottom-1 px-2.5 py-0.5 text-white rounded-full text-[9px] font-bold uppercase tracking-wider shadow-sm whitespace-nowrap ${
+              sisaPoin === 100 ? 'bg-emerald-500' :
+              sisaPoin >= 80 ? 'bg-blue-500' :
+              sisaPoin >= 60 ? 'bg-yellow-500' :
+              sisaPoin >= 40 ? 'bg-orange-500' :
+              sisaPoin >= 5 ? 'bg-red-500' : 'bg-rose-950'
+            }`}>
+              {sisaPoin === 100 ? 'Aman' : studentPoints.status || 'Evaluasi'}
             </div>
           </div>
           <div className="text-center md:text-left min-w-0 flex-1 flex flex-col md:flex-row items-center justify-between gap-4">
@@ -321,8 +348,12 @@ const OrangTuaDashboardPage = () => {
                 Selamat Datang, Bapak/Ibu Wali Murid!
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-2xl">
-                Anda masuk sebagai <strong className="text-slate-800">Orang Tua/Wali</strong> dari <strong className="text-slate-800">{studentPoints.name}</strong>. Akumulasi poin pelanggaran anak Anda saat ini adalah <strong className="text-slate-800">{studentPoints.poin_pelanggaran || 0} dari maksimal 100 poin</strong>. Status kesiswaan berkala siswa adalah <span className={`px-2 py-0.5 rounded text-xs font-bold font-mono ${
-                  studentPoints.poin_pelanggaran > 0 ? 'bg-red-500/10 text-red-600' : 'bg-emerald-500/10 text-emerald-600'
+                Anda masuk sebagai <strong className="text-slate-800">Orang Tua/Wali</strong> dari <strong className="text-slate-800">{studentPoints.name}</strong>. Sisa Poin Karakter anak Anda saat ini adalah <strong className="text-slate-800">{sisaPoin} dari 100 poin</strong> (Akumulasi Pelanggaran: {studentPoints.poin_pelanggaran || 0} Pts, Penghargaan: +{studentPoints.poin_penghargaan || 0} Pts). Status kesiswaan berkala siswa adalah <span className={`px-2 py-0.5 rounded text-xs font-bold font-mono ${
+                  sisaPoin === 100 ? 'bg-emerald-500/10 text-emerald-600' :
+                  sisaPoin >= 80 ? 'bg-blue-500/10 text-blue-600' :
+                  sisaPoin >= 60 ? 'bg-yellow-500/10 text-yellow-600' :
+                  sisaPoin >= 40 ? 'bg-orange-500/10 text-orange-600' :
+                  sisaPoin >= 5 ? 'bg-red-500/10 text-red-600' : 'bg-rose-950/10 text-rose-950'
                 }`}>{studentPoints.status || 'Bebas Pelanggaran'}</span>. Pantau terus kedisiplinan dan penghargaan anak Anda.
               </p>
             </div>
@@ -370,7 +401,23 @@ const OrangTuaDashboardPage = () => {
 
 
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex items-center gap-4">
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
+              sisaPoin === 100 ? 'bg-emerald-500/10 text-emerald-600' :
+              sisaPoin >= 80 ? 'bg-blue-500/10 text-blue-600' :
+              sisaPoin >= 60 ? 'bg-yellow-500/10 text-yellow-600' :
+              sisaPoin >= 40 ? 'bg-orange-500/10 text-orange-600' : 'bg-red-500/10 text-red-600'
+            }`}>
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138z" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-slate-400 tracking-wider uppercase">Poin Karakter (Sisa)</p>
+              <h3 className="text-lg font-extrabold text-slate-900 mt-0.5">{sisaPoin} Poin</h3>
+            </div>
+          </div>
           <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex items-center gap-4">
             <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
               studentPoints.poin_pelanggaran > 0 ? 'bg-red-500/10 text-red-600' : 'bg-slate-500/10 text-slate-600'
@@ -380,32 +427,35 @@ const OrangTuaDashboardPage = () => {
               </svg>
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-400 tracking-wider uppercase">Poin Pelanggaran</p>
-              <h3 className="text-xl font-extrabold text-slate-900 mt-0.5">{studentPoints.poin_pelanggaran || 0} Poin</h3>
+              <p className="text-[10px] font-bold text-slate-400 tracking-wider uppercase">Poin Pelanggaran</p>
+              <h3 className="text-lg font-extrabold text-slate-900 mt-0.5">{studentPoints.poin_pelanggaran || 0} Pts</h3>
             </div>
           </div>
           <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 shrink-0">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-400 tracking-wider uppercase">Poin Penghargaan</p>
-              <h3 className="text-xl font-extrabold text-slate-900 mt-0.5">{studentPoints.poin_penghargaan || 0} Poin</h3>
+              <p className="text-[10px] font-bold text-slate-400 tracking-wider uppercase">Poin Penghargaan</p>
+              <h3 className="text-lg font-extrabold text-slate-900 mt-0.5">+{studentPoints.poin_penghargaan || 0} Pts</h3>
             </div>
           </div>
           <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex items-center gap-4">
             <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
-              studentPoints.poin_pelanggaran > 0 ? 'bg-amber-500/10 text-amber-600' : 'bg-emerald-500/10 text-emerald-600'
+              sisaPoin === 100 ? 'bg-emerald-500/10 text-emerald-600' :
+              sisaPoin >= 80 ? 'bg-blue-500/10 text-blue-600' :
+              sisaPoin >= 60 ? 'bg-yellow-500/10 text-yellow-600' :
+              sisaPoin >= 40 ? 'bg-orange-500/10 text-orange-600' : 'bg-red-500/10 text-red-600'
             }`}>
               <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-400 tracking-wider uppercase">Status Kesiswaan</p>
-              <h3 className="text-sm font-extrabold text-slate-950 mt-1">{studentPoints.status || 'Bebas Pelanggaran'}</h3>
+              <p className="text-[10px] font-bold text-slate-400 tracking-wider uppercase">Status Kesiswaan</p>
+              <h3 className="text-xs font-extrabold text-slate-955 mt-1.5 truncate">{studentPoints.status || 'Bebas Pelanggaran'}</h3>
             </div>
           </div>
         </div>
@@ -515,11 +565,20 @@ const OrangTuaDashboardPage = () => {
                       <div key={msg.id} className="bg-slate-50 rounded-2xl p-4 border border-slate-200/60 space-y-3">
                         <div className="flex justify-between items-center">
                           <span className="text-[10px] text-slate-400 font-bold">{msg.tanggal}</span>
-                          <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase ${
-                            msg.dibalas ? 'bg-green-50 text-green-600' : 'bg-yellow-50 text-yellow-600'
-                          }`}>
-                            {msg.dibalas ? 'Dibalas' : 'Menunggu Balasan'}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase ${
+                              msg.dibalas ? 'bg-green-50 text-green-600' : 'bg-yellow-50 text-yellow-600'
+                            }`}>
+                              {msg.dibalas ? 'Dibalas' : 'Menunggu Balasan'}
+                            </span>
+                            <button
+                              onClick={() => handleDeletePesan(msg.id)}
+                              className="text-red-500 hover:text-red-700 hover:underline text-[10px] font-bold transition-all ml-1"
+                              title="Hapus Konsultasi"
+                            >
+                              Hapus
+                            </button>
+                          </div>
                         </div>
                         <div className="text-xs text-slate-700">
                           <p className="font-bold text-slate-900 mb-1">Anda:</p>
@@ -684,11 +743,11 @@ const OrangTuaDashboardPage = () => {
               </h4>
               <div className="space-y-3 font-medium">
                 {[
-                  { range: "0 - 20 Poin", name: "Panggilan I", pembina: "Guru, Wali Kelas", desc: "Teguran langsung oleh guru, pencatatan di Kartu Siswa oleh piket." },
-                  { range: "25 - 40 Poin", name: "Panggilan II", pembina: "Wali Kelas, BK", desc: "Pembinaan Wali Kelas & BK, Panggilan Orang Tua secara lisan, Surat Peringatan 1." },
-                  { range: "45 - 60 Poin", name: "Panggilan III", pembina: "BK, Wali Kelas", desc: "Pembinaan BK & Wali Kelas, Home Visit, Surat Pernyataan bermaterai, Surat Peringatan 2." },
-                  { range: "65 - 95 Poin", name: "Panggilan IV", pembina: "BK, Wakasek Kesiswaan", desc: "Panggilan Resmi Orang Tua tertulis, Surat Pernyataan bermaterai, Surat Peringatan 3." },
-                  { range: "100 Poin", name: "Panggilan Terakhir", pembina: "Kepala Sekolah & Tim BK", desc: "Panggilan Resmi Orang Tua, Gelar perkara, Dikembalikan ke Orang Tua (Dikeluarkan)." }
+                  { range: "80 - 99 Poin", name: "Panggilan I", pembina: "Guru, Wali Kelas", desc: "Teguran langsung oleh guru, pencatatan di Kartu Siswa oleh piket." },
+                  { range: "60 - 79 Poin", name: "Panggilan II", pembina: "Wali Kelas, BK", desc: "Pembinaan Wali Kelas & BK, Panggilan Orang Tua secara lisan, Surat Peringatan 1." },
+                  { range: "40 - 59 Poin", name: "Panggilan III", pembina: "BK, Wali Kelas", desc: "Pembinaan BK & Wali Kelas, Home Visit, Surat Pernyataan bermaterai, Surat Peringatan 2." },
+                  { range: "5 - 39 Poin", name: "Panggilan IV", pembina: "BK, Wakasek Kesiswaan", desc: "Panggilan Resmi Orang Tua tertulis, Surat Pernyataan bermaterai, Surat Peringatan 3." },
+                  { range: "< 5 Poin", name: "Panggilan Terakhir", pembina: "Kepala Sekolah & Tim BK", desc: "Panggilan Resmi Orang Tua, Gelar perkara, Dikembalikan ke Orang Tua (Dikeluarkan)." }
                 ].map((item, idx) => (
                   <div key={idx} className="bg-slate-50 border border-slate-200/60 rounded-xl p-3.5 space-y-1">
                     <div className="flex justify-between items-center">
@@ -779,19 +838,31 @@ const OrangTuaDashboardPage = () => {
       />
 
       {/* ====== Floating Toasts ====== */}
-      <div className="fixed top-6 right-6 z-55 flex flex-col gap-3 max-w-sm w-full pointer-events-none">
+      <div className="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3 max-w-sm w-full pointer-events-none">
         {toasts.map((toast) => (
           <div
             key={toast.id}
             className="pointer-events-auto bg-[#0B1528] text-white border border-slate-700/50 rounded-xl shadow-2xl p-4 flex items-start gap-3 animate-slideInRight max-w-sm"
           >
-            <div className="bg-[#F5921B]/10 text-[#F5921B] p-1.5 rounded-lg shrink-0 mt-0.5">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+            <div className={`p-1.5 rounded-lg shrink-0 mt-0.5 ${
+              toast.type === 'error'
+                ? 'bg-red-500/15 text-red-400'
+                : 'bg-emerald-500/15 text-emerald-400'
+            }`}>
+              {toast.type === 'error' ? (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              )}
             </div>
             <div className="flex-1 text-xs">
-              <p className="font-extrabold tracking-wide uppercase text-slate-200">Notifikasi</p>
+              <p className={`font-extrabold tracking-wide uppercase ${toast.type === 'error' ? 'text-red-400' : 'text-emerald-400'}`}>
+                {toast.type === 'error' ? 'Gagal' : 'Berhasil'}
+              </p>
               <p className="text-slate-400 mt-1 leading-relaxed font-medium">{toast.message}</p>
             </div>
             <button

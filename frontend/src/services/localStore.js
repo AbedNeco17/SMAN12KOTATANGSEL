@@ -174,12 +174,12 @@ const defaultGaleri = [
 const defaultPengaturan = {
   namaSekolah: "SMAN 12 KOTA TANGERANG SELATAN",
   tagline: "I AM THE BEST, YOU'RE THE BEST WE ARE THE BEST, DUBES IS THE BEST",
-  alamat: "Jl. Pendidikan No. 12, Ciputat, Tangerang Selatan, Banten 15411",
+  alamat: "Jl. Raya Cilenggang I No. 1, Cilenggang, Kec. Serpong, Kota Tangerang Selatan, Banten 15310",
   telepon: "(021) 7654321",
   email: "info@sman12tangsel.sch.id",
   kepalaSekolah: "Rokhmat Hidayat, S.Pd., MM",
   nipKepalaSekolah: "19740512 200003 1 002",
-  fotoKepalaSekolah: "",
+  fotoKepalaSekolah: "/images/KEPALA SEKOLAH.jpeg",
   sambutanKepalaSekolah: [
     "Puji syukur kita panjatkan kehadirat Allah SWT, karena berkat rahmat dan karunia-Nya, kita semua diberikan kesehatan dan kesempatan untuk terus berkarya. Di kesempatan yang berbahagia ini, saya ingin menyampaikan sambutan singkat kepada seluruh civitas akademika SMAN 12 Kota Tangerang Selatan, serta para orang tua dan masyarakat yang mendukung perjalanan sekolah ini.",
     "Sebagai Kepala SMAN 12 Kota Tangerang Selatan, saya merasa sangat terhormat dapat memimpin sekolah yang penuh dengan semangat, prestasi, dan dedikasi tinggi dalam mencetak generasi muda yang berkarakter, berprestasi, serta siap menghadapi tantangan global. Kami berkomitmen untuk terus meningkatkan kualitas pendidikan yang kami berikan, baik dalam hal akademik, non-akademik, maupun pengembangan karakter siswa.",
@@ -365,7 +365,7 @@ const defaultSiswaPoin = [
     kelas: 'XII MIPA 2',
     poin_pelanggaran: 5,
     poin_penghargaan: 45,
-    status: 'Panggilan I',
+    status: 'Bebas Pelanggaran',
     passwordSiswa: 'siswa123',
     passwordOrangTua: 'ortu123'
   },
@@ -485,6 +485,16 @@ const initStore = () => {
   // Clear any existing PPDB key in local storage to keep it clean
   localStorage.removeItem("sman12_ppdb");
 
+  // Migration: Reset local storage for 100-base deduction system v2
+  if (!localStorage.getItem("sman12_points_v2_100base")) {
+    console.log("Migrating points system to 100-base deduction system.");
+    localStorage.removeItem("sman12_siswa_poin");
+    localStorage.removeItem("sman12_riwayat_poin");
+    localStorage.removeItem("sman12_siswa_notifikasi");
+    localStorage.removeItem("sman12_pesan_bk");
+    localStorage.setItem("sman12_points_v2_100base", "true");
+  }
+
   // Migration: Check for old point schema (presence of 'points' in student data, or old categories in point rules)
   let oldSchemaDetected = false;
   const oldSiswaPoin = localStorage.getItem("sman12_siswa_poin");
@@ -571,7 +581,19 @@ const initStore = () => {
   if (!localStorage.getItem("sman12_pesan")) {
     localStorage.setItem("sman12_pesan", JSON.stringify([]));
   }
-  if (!localStorage.getItem("sman12_pengaturan")) {
+  const storedConfig = localStorage.getItem("sman12_pengaturan");
+  let configNeedsReset = !storedConfig;
+  if (storedConfig) {
+    try {
+      const parsed = JSON.parse(storedConfig);
+      if (parsed.alamat && parsed.alamat.includes("Jl. Pendidikan")) {
+        configNeedsReset = true;
+      }
+    } catch (e) {
+      configNeedsReset = true;
+    }
+  }
+  if (configNeedsReset) {
     localStorage.setItem("sman12_pengaturan", JSON.stringify(defaultPengaturan));
   }
   if (!localStorage.getItem("sman12_siswa_poin")) {
@@ -618,30 +640,30 @@ export const localStore = {
         return sum + (isNaN(pts) ? 0 : pts);
       }, 0);
   },
-  getLangkahPembinaan: (violationPoints) => {
-    if (violationPoints === 0) return { tahap: 'Bebas Pelanggaran', pembina: '-', tindakan: 'Tidak ada tindakan pelanggaran.' };
-    if (violationPoints <= 20) {
+  getLangkahPembinaan: (netViolationPoints) => {
+    if (netViolationPoints <= 0) return { tahap: 'Bebas Pelanggaran', pembina: '-', tindakan: 'Tidak ada tindakan pelanggaran.' };
+    if (netViolationPoints <= 20) {
       return {
         tahap: 'Panggilan I (Proses 1)',
         pembina: 'Guru, Wali Kelas',
         tindakan: '1. Teguran oleh guru dan dikomunikasikan kepada piket\n2. Setiap temuan pelanggaran tatib siswa dicatat pada Kartu Siswa oleh piket dan ditanda tangani oleh walikelas dan orang tua.\n3. Dikomunikasikan kepada wali kelas'
       };
     }
-    if (violationPoints <= 40) {
+    if (netViolationPoints <= 40) {
       return {
         tahap: 'Panggilan II (Proses 2)',
         pembina: 'Wali Kelas, Bimbingan Konseling',
         tindakan: '1. Pembinaan wali kelas dari poin terendah\n2. Undang orang tua secara lisan. Bersama tim kesiswaan berkomunikasi dengan orang tua untuk menemukan solusi\n3. Diberikan PERINGATAN 1'
       };
     }
-    if (violationPoints <= 60) {
+    if (netViolationPoints <= 60) {
       return {
         tahap: 'Panggilan III (Proses 3)',
         pembina: 'Bimbingan Konseling, Wali Kelas',
         tindakan: '1. Pembinaan oleh Bimbingan Konseling dari poin terendah\n2. Dimungkinkan home visit oleh Bimbingan Konseling dan Wali Kelas\n3. Siswa membuat pernyataan ditanda tangani orang tua dan bermaterai\n4. Diberikan PERINGATAN 2'
       };
     }
-    if (violationPoints <= 95) {
+    if (netViolationPoints <= 95) {
       return {
         tahap: 'Panggilan IV (Proses 4)',
         pembina: 'Bimbingan Konseling, Wakasek Kesiswaan',
@@ -653,6 +675,16 @@ export const localStore = {
       pembina: 'Bimbingan Konseling, Wakasek Kesiswaan, Kepala Sekolah',
       tindakan: '1. Panggilan resmi orang tua oleh sekolah\n2. Gelar perkara dengan menghadirkan guru dan wali kelas\n3. Dikembalikan ke orang tua'
     };
+  },
+  getSisaPoin: (nisn) => {
+    const student = localStore.getSiswaByNisn(nisn);
+    if (!student) return 100;
+    return Math.max(0, Math.min(100, 100 - (student.poin_pelanggaran || 0) + (student.poin_penghargaan || 0)));
+  },
+  getNetViolationPoints: (nisn) => {
+    const student = localStore.getSiswaByNisn(nisn);
+    if (!student) return 0;
+    return Math.max(0, (student.poin_pelanggaran || 0) - (student.poin_penghargaan || 0));
   },
 
   // Berita
@@ -823,11 +855,14 @@ export const localStore = {
       }
       
       let newStatus = 'Bebas Pelanggaran';
-      if (pPelanggaran === 0) newStatus = 'Bebas Pelanggaran';
-      else if (pPelanggaran <= 20) newStatus = 'Panggilan I';
-      else if (pPelanggaran <= 40) newStatus = 'Panggilan II';
-      else if (pPelanggaran <= 60) newStatus = 'Panggilan III';
-      else if (pPelanggaran <= 95) newStatus = 'Panggilan IV';
+      const netViolation = Math.max(0, pPelanggaran - pPenghargaan);
+      const sisaPoin = Math.max(0, Math.min(100, 100 - netViolation));
+      
+      if (sisaPoin === 100) newStatus = 'Bebas Pelanggaran';
+      else if (sisaPoin >= 80) newStatus = 'Panggilan I';
+      else if (sisaPoin >= 60) newStatus = 'Panggilan II';
+      else if (sisaPoin >= 40) newStatus = 'Panggilan III';
+      else if (sisaPoin >= 5) newStatus = 'Panggilan IV';
       else newStatus = 'Panggilan Terakhir';
 
       list[idx] = {
@@ -883,6 +918,19 @@ export const localStore = {
     const notif = JSON.parse(localStorage.getItem("sman12_siswa_notifikasi") || "[]");
     return notif.filter(n => n.nisn === nisn);
   },
+  addSiswaNotifikasi: (nisn, pesan, tipe = 'info') => {
+    const notif = JSON.parse(localStorage.getItem("sman12_siswa_notifikasi") || "[]");
+    const newNotifId = notif.length > 0 ? Math.max(...notif.map(n => n.id)) + 1 : 1;
+    notif.unshift({
+      id: newNotifId,
+      nisn: nisn,
+      tipe: tipe,
+      pesan: pesan,
+      waktu: 'Baru saja',
+      dibaca: false
+    });
+    localStorage.setItem("sman12_siswa_notifikasi", JSON.stringify(notif));
+  },
   markNotifikasiRead: (id) => {
     const notif = JSON.parse(localStorage.getItem("sman12_siswa_notifikasi") || "[]");
     const updated = notif.map(n => n.id === parseInt(id) ? { ...n, dibaca: true } : n);
@@ -925,6 +973,11 @@ export const localStore = {
       list[idx].balasan = balasan;
       localStorage.setItem("sman12_pesan_bk", JSON.stringify(list));
     }
+  },
+  deletePesanBk: (id) => {
+    const list = JSON.parse(localStorage.getItem("sman12_pesan_bk") || "[]");
+    const filtered = list.filter((item) => item.id !== parseInt(id));
+    localStorage.setItem("sman12_pesan_bk", JSON.stringify(filtered));
   },
 
   // Prestasi Siswa

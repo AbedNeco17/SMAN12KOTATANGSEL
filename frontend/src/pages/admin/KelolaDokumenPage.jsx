@@ -238,7 +238,8 @@ const KelolaDokumenPage = () => {
   const stats = getStats();
 
   return (
-    <div className="space-y-6">
+    <>
+      <div className="space-y-6">
       {/* ====== Breadcrumb ====== */}
       <div className="flex items-center gap-2 text-xs text-dark-400">
         <span className="text-primary font-medium">Admin Panel</span>
@@ -269,14 +270,6 @@ const KelolaDokumenPage = () => {
         </button>
       </div>
 
-      {successMsg && (
-        <div className="p-3 bg-green-50 border border-green-200 text-green-700 text-xs font-semibold rounded-xl flex items-center gap-2 transition-all duration-300">
-          <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          {successMsg}
-        </div>
-      )}
 
       {/* ====== Stats Grid ====== */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -557,7 +550,29 @@ const KelolaDokumenPage = () => {
           </div>
         </div>
       )}
-    </div>
+
+      </div>
+
+      {/* ====== Toast Popup ====== */}
+      {successMsg && (
+        <div className="fixed bottom-6 right-6 z-[9999] bg-[#0B1528] text-white border border-slate-700/50 rounded-xl shadow-2xl p-4 flex items-start gap-3 animate-slideInRight max-w-sm">
+          <div className="bg-emerald-500/15 text-emerald-400 p-1.5 rounded-lg shrink-0 mt-0.5">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div className="flex-1 text-xs">
+            <p className="font-extrabold tracking-wide uppercase text-emerald-400">Berhasil</p>
+            <p className="text-slate-400 mt-1 leading-relaxed font-medium">{successMsg}</p>
+          </div>
+          <button onClick={() => setSuccessMsg('')} className="text-slate-500 hover:text-white transition-colors shrink-0">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      )}
+    </>
   );
 };
 
