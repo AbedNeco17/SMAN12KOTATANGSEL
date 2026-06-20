@@ -93,15 +93,10 @@ const Footer = () => {
       </div>
 
       <div className="border-t border-dark-600">
-        <div className="container-main py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p className="text-center sm:text-left text-[11px] text-dark-400">
+        <div className="container-main py-4">
+          <p className="text-center text-[11px] text-dark-400">
             &copy; {new Date().getFullYear()} SMAN 12 Kota Tangerang Selatan. All rights reserved.
           </p>
-          <div className="text-[11px] text-dark-400 flex items-center gap-1.5">
-            <Link to="/login" className="hover:text-primary transition-colors">
-              Portal Admin &amp; Guru
-            </Link>
-          </div>
         </div>
       </div>
     </footer>
