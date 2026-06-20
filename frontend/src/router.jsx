@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createHashRouter } from 'react-router-dom';
 
 import PublicLayout from '@layouts/PublicLayout';
 import AdminLayout from '@layouts/AdminLayout';
@@ -29,7 +29,7 @@ import KelolaDokumenPage from '@pages/admin/KelolaDokumenPage';
 
 import NotFoundPage from '@pages/NotFoundPage';
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   // ========================================
   // Public Routes
   // ========================================
