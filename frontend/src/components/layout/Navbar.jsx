@@ -85,7 +85,7 @@ const Navbar = () => {
       <div className="absolute top-0 left-0 w-full h-[4px] bg-gradient-to-r from-primary via-amber-400 to-primary-dark" />
 
       <div className="container-main">
-        <div className="flex items-center justify-between h-[70px] pt-[4px]">
+        <div className="relative flex items-center justify-between h-[70px] pt-[4px]">
 
           {/* Left Menu Items (Desktop) */}
           <div className="hidden lg:flex items-center gap-1 bg-gradient-to-br from-orange-50/50 to-white/90 px-2 py-1.5 rounded-xl border border-orange-100/60 shadow-[0_1px_3px_rgba(245,146,27,0.02)]">
@@ -142,8 +142,12 @@ const Navbar = () => {
             })}
           </div>
 
-          {/* Center Logo & Brand */}
-          <Link to="/" className="flex items-center gap-2.5 flex-shrink-0 hover:scale-[1.02] transition-transform duration-200" onClick={closeMobile}>
+          {/* Center Logo & Brand — centered on mobile, in-flow on desktop */}
+          <Link
+            to="/"
+            className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2.5 flex-shrink-0 hover:scale-[1.02] transition-transform duration-200 lg:static lg:left-auto lg:translate-x-0"
+            onClick={closeMobile}
+          >
             <img
               src={logoSman12}
               alt="Logo SMAN 12"
