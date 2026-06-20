@@ -142,10 +142,10 @@ const Navbar = () => {
             })}
           </div>
 
-          {/* Center Logo & Brand */}
+          {/* Logo — centered on mobile, in-flow on desktop */}
           <Link
             to="/"
-            className="flex items-center gap-2.5 flex-shrink-0 hover:scale-[1.02] transition-transform duration-200"
+            className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2.5 flex-shrink-0 hover:scale-[1.02] transition-transform duration-200 lg:static lg:left-auto lg:translate-x-0"
             onClick={closeMobile}
           >
             <img
